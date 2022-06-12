@@ -16,53 +16,47 @@ var functions = template.FuncMap{}
 
 var app *config.AppConfig
 
-//if we want to add some data to every template we can pass that data to this function
-func AddDefaultData(td *models.TemplateData) *models.TemplateData {
-	return td
-}
-
+// NewTemplates sets the config for the template package
 func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-//Method for parsing and rendering templates
-func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
 
+	return td
+}
+
+// RenderTemplate renders a template
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
-	//getting the ready template cache as a map
 	if app.UseCache {
+		// get the template cache from the app config
 		tc = app.TemplateCache
 	} else {
-		tc, _ = CreateTempateCache()
+		tc, _ = CreateTemplateCache()
 	}
 
-	//getting the particular template out of the cache map , second variable ok will be true if the key is found and template is there
-	//in the map otherwise it will be false
 	t, ok := tc[tmpl]
-
 	if !ok {
 		log.Fatal("Could not get template from template cache")
 	}
-	//Adding to buffer is an extra step but it helps in error handling
-	//creating a buffer and adding the current template in the memory to that buffer
+
 	buf := new(bytes.Buffer)
 
 	td = AddDefaultData(td)
 
-	//adding template t to buffer
 	_ = t.Execute(buf, td)
 
-	//writing buffer to responseWriter
 	_, err := buf.WriteTo(w)
-
 	if err != nil {
-		fmt.Println("Error writing template to the browser ", err)
+		fmt.Println("error writing template to browser", err)
 	}
+
 }
 
-//CreateTempateCache creates a template cache as a map
-func CreateTempateCache() (map[string]*template.Template, error) {
+// CreateTemplateCache creates a template cache as a map
+func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	myCache := map[string]*template.Template{}
 
@@ -73,7 +67,6 @@ func CreateTempateCache() (map[string]*template.Template, error) {
 
 	for _, page := range pages {
 		name := filepath.Base(page)
-		fmt.Println("Page is currently", page)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return myCache, err
