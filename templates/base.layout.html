@@ -50,6 +50,7 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
@@ -153,14 +154,6 @@
             })
         }
 
-        // {{with .Error}}
-         notify("{{.}}","error")
-        // {{end}}
-
-
-        // {{with .Flash}}
-         notify("{{.}}","success")
-        // {{end}}
 
         function Prompt() {
             let toast = function (c) {
@@ -274,6 +267,8 @@
         }
 
     </script>
+
+   
 
     </body>
 

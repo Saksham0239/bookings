@@ -48,6 +48,7 @@ func (f *Form) Has(field string, r *http.Request) bool {
 
 //Valid returns true if there are no errors otherwise false
 func (f *Form) Valid() bool {
+	fmt.Println("Valid working ", len(f.Errors) == 0)
 	return len(f.Errors) == 0
 }
 

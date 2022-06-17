@@ -142,20 +142,20 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	form.MinLength("first_name", 3, r)
 	form.IsEmail("email")
 
+	//if the form data is invalid after above validation is done
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
-
+		fmt.Println("rerendering the page")
 		render.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 			Form: form,
 			Data: data,
 		})
+	} else {
+		m.App.Session.Put(r.Context(), "reservation", reservation)
+		fmt.Println("this is also working")
+		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 	}
-
-	m.App.Session.Put(r.Context(), "reservation", reservation)
-
-	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
-
 }
 
 func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
